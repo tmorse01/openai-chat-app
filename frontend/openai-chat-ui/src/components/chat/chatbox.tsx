@@ -12,6 +12,7 @@ type ChatBoxProps = {
 
 const ChatBox: React.FC<ChatBoxProps> = ({ messages, setMessages }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [value, setValue] = useState("");
 
   const onSearch: SearchProps["onSearch"] = (value, _e, info) => {
     console.log(info?.source, value);
@@ -38,6 +39,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, setMessages }) => {
         setMessages((prevState) => [...prevState, assistantMessage]);
         // unblock sending a request
         setIsLoading(false);
+        setValue("");
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -51,6 +53,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, setMessages }) => {
       enterButton={<SendOutlined />}
       size="large"
       loading={isLoading}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
       onSearch={onSearch}
     />
   );

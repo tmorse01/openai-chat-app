@@ -25,12 +25,16 @@ function App() {
       >
         <Layout style={{ minHeight: "100vh" }}>
           <Sider width={256}>
-            <Title level={4}>Chat history</Title>
+            <Title style={{ textAlign: "center" }} level={4}>
+              Chat history
+            </Title>
             <SiderMenu />
           </Sider>
           <Layout>
             <Header>
-              <Title level={3}>Open AI Chat Bot</Title>
+              <Title style={{ textAlign: "center" }} level={3}>
+                React Tutor
+              </Title>
             </Header>
             <Content>
               <Chat />
