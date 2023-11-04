@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
 import os
 import openai
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -14,6 +16,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class ChatCompletionRequest(BaseModel):
+    messages: list[dict]
+
 
 @app.get("/")
 async def root():
@@ -21,18 +26,19 @@ async def root():
 
 # Define the endpoint for generating completions
 @app.post("/generate-text")
-async def generate_text(prompt: str, max_tokens: int = 50):
+async def generate_text(request_body: ChatCompletionRequest):
     try:
+        # response = {"prompt": request.prompt}
         # Generate a completion using OpenAI API
-        response = openai.Completion.create(
-            engine="gpt-3.5-turbo",
-            prompt=prompt,
-            max_tokens=max_tokens,
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=request_body.messages
         )
         
         # Return the response from OpenAI as JSON
         return response
     
     except Exception as e:
+        print(e)
         # Handle any errors and return an HTTP 500 error response
         raise HTTPException(status_code=500, detail=str(e))
