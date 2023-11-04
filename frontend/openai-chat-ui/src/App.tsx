@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./App.css";
 import { App as AntdApp, Layout, Typography, theme } from "antd";
 import SiderMenu from "./components/sidermenu";
