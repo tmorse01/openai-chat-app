@@ -1,0 +1,36 @@
+.chat {
+  display: grid;
+  gap: 24px;
+  margin: 24px;
+}
+
+.chat-list {
+  display: grid;
+  gap: 16px;
+}
+
+.chat-message {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  padding: 8px;
+  margin: 4px 0;
+  border-radius: 4px;
+}
+
+.user {
+  align-self: flex-end;
+}
+
+.assistant {
+  align-self: flex-start;
+}
+
+.copy-code-btn {
+  color: #fff;
+  position: absolute;
+  margin: 4px;
+}
+
+.content {
+  margin: 12px;
+}

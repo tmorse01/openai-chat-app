@@ -1,5 +1,11 @@
 import "./App.css";
-import { App as AntdApp, Layout, Typography, theme } from "antd";
+import {
+  App as AntdApp,
+  Layout,
+  Typography,
+  theme,
+  ConfigProvider,
+} from "antd";
 import SiderMenu from "./components/sidermenu";
 import Chat from "./components/chat/chat";
 
@@ -12,21 +18,27 @@ function App() {
 
   return (
     <AntdApp>
-      <Layout style={{ minHeight: "100vh" }}>
-        <Sider width={256} style={{ background: colorBgContainer }}>
-          <Title level={4}>Chat history</Title>
-          <SiderMenu />
-        </Sider>
-        <Layout>
-          <Header style={{ background: colorBgContainer }}>
-            <Title level={3}>Open AI Chat Bot</Title>
-          </Header>
-          <Content>
-            <Chat />
-          </Content>
-          <Footer style={{ textAlign: "center" }}>Open AI Chat Bot</Footer>
+      <ConfigProvider
+        theme={{
+          algorithm: theme.darkAlgorithm,
+        }}
+      >
+        <Layout style={{ minHeight: "100vh" }}>
+          <Sider width={256}>
+            <Title level={4}>Chat history</Title>
+            <SiderMenu />
+          </Sider>
+          <Layout>
+            <Header>
+              <Title level={3}>Open AI Chat Bot</Title>
+            </Header>
+            <Content>
+              <Chat />
+            </Content>
+            <Footer style={{ textAlign: "center" }}>Open AI Chat Bot</Footer>
+          </Layout>
         </Layout>
-      </Layout>
+      </ConfigProvider>
     </AntdApp>
   );
 }

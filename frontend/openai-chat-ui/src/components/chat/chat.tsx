@@ -1,7 +1,8 @@
 import { useState } from "react";
 import ChatBox from "./chatbox";
 import { Message } from "../../types/types";
-
+import ChatList from "./chatlist";
+import "./chat.css";
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -12,7 +13,8 @@ const Chat: React.FC = () => {
   ]);
   console.log({ messages });
   return (
-    <div>
+    <div className="chat">
+      <ChatList messages={messages} />
       <ChatBox messages={messages} setMessages={setMessages} />
     </div>
   );
