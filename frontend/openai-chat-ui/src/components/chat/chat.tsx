@@ -3,6 +3,7 @@ import ChatBox from "./chatbox";
 import { Message } from "../../types/types";
 import ChatList from "./chatlist";
 import "./chat.css";
+import SystemRole from "./systemrole";
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -11,9 +12,9 @@ const Chat: React.FC = () => {
         "You are a react development tutor, skilled in explaining complex framework concepts as well as other web development knowledge in simple terms that anyone with programming knowledge can understand.",
     },
   ]);
-  console.log({ messages });
   return (
     <div className="chat">
+      <SystemRole messages={messages} setMessages={setMessages} />
       <ChatList messages={messages} />
       <ChatBox messages={messages} setMessages={setMessages} />
     </div>

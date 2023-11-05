@@ -1,21 +1,11 @@
 import "./App.css";
-import {
-  App as AntdApp,
-  Layout,
-  Typography,
-  theme,
-  ConfigProvider,
-} from "antd";
-import SiderMenu from "./components/sidermenu";
+import { App as AntdApp, Layout, theme, ConfigProvider } from "antd";
 import Chat from "./components/chat/chat";
 
-const { Title } = Typography;
-const { Sider, Header, Content, Footer } = Layout;
-function App() {
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
+import ChatHistory from "./components/chathistory/chathistory";
 
+const { Content, Footer } = Layout;
+function App() {
   return (
     <AntdApp>
       <ConfigProvider
@@ -24,18 +14,8 @@ function App() {
         }}
       >
         <Layout style={{ minHeight: "100vh" }}>
-          <Sider width={256}>
-            <Title style={{ textAlign: "center" }} level={4}>
-              Chat history
-            </Title>
-            <SiderMenu />
-          </Sider>
+          <ChatHistory />
           <Layout>
-            <Header>
-              <Title style={{ textAlign: "center" }} level={3}>
-                React Tutor
-              </Title>
-            </Header>
             <Content>
               <Chat />
             </Content>
