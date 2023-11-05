@@ -39,13 +39,17 @@ const ChatMessage: React.FC<{ message: Message }> = ({ message }) => {
               const match = /language-(\w+)/.exec(className || "");
               if (match) {
                 return (
-                  <div>
-                    <CopyToClipboard
-                      text={String(children)}
-                      onCopy={() => messageApi.info("Copied to clipboard.")}
+                  <div style={{ position: "relative" }}>
+                    <div
+                      style={{ position: "absolute", top: "4px", right: "4px" }}
                     >
-                      <CopyOutlined className="copy-code-btn" />
-                    </CopyToClipboard>
+                      <CopyToClipboard
+                        text={String(children)}
+                        onCopy={() => messageApi.info("Copied to clipboard.")}
+                      >
+                        <CopyOutlined className="copy-code-btn" />
+                      </CopyToClipboard>
+                    </div>
                     {/* @ts-ignore */}
                     <SyntaxHighlighter
                       {...rest}
