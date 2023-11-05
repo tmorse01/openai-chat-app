@@ -1,5 +1,4 @@
 .chat {
-  display: grid;
   gap: 24px;
   margin: 24px;
 }
@@ -32,5 +31,5 @@
 }
 
 .content {
-  margin: 12px;
+  margin: 0 12px 0 12px;
 }

@@ -3,6 +3,7 @@ import { Avatar, Typography, theme, message as antdMessage } from "antd";
 import { CopyOutlined, RobotOutlined, UserOutlined } from "@ant-design/icons";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { okaidia } from "react-syntax-highlighter/dist/esm/styles/prism";
+import Markdown from "react-markdown";
 
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
@@ -12,7 +13,7 @@ import "./chat.css";
 
 const ChatMessage: React.FC<{ message: Message }> = ({ message }) => {
   const {
-    token: { colorPrimaryBg, colorTextBase, colorBgContainer },
+    token: { colorPrimaryBg, colorText, colorBgContainer },
   } = theme.useToken();
   const [messageApi, contextHolder] = antdMessage.useMessage();
   const { content, role } = message;
@@ -20,7 +21,7 @@ const ChatMessage: React.FC<{ message: Message }> = ({ message }) => {
 
   const style = {
     backgroundColor: role === "assistant" ? colorPrimaryBg : colorBgContainer,
-    color: role === "assistant" ? colorBgContainer : colorTextBase,
+    color: colorText,
   };
 
   return (
@@ -30,7 +31,42 @@ const ChatMessage: React.FC<{ message: Message }> = ({ message }) => {
         {role === "assistant" ? <RobotOutlined /> : <UserOutlined />}
       </Avatar>
       <div className="content">
-        {content.split("```").map((chunk, index) => {
+        <Markdown
+          children={content}
+          components={{
+            code(props) {
+              const { children, className, node, ...rest } = props;
+              const match = /language-(\w+)/.exec(className || "");
+              if (match) {
+                return (
+                  <div>
+                    <CopyToClipboard
+                      text={String(children)}
+                      onCopy={() => messageApi.info("Copied to clipboard.")}
+                    >
+                      <CopyOutlined className="copy-code-btn" />
+                    </CopyToClipboard>
+                    {/* @ts-ignore */}
+                    <SyntaxHighlighter
+                      {...rest}
+                      children={String(children).replace(/\n$/, "")}
+                      style={okaidia}
+                      language={match[1]}
+                      PreTag="div"
+                    />
+                  </div>
+                );
+              } else {
+                return (
+                  <code {...rest} className={className}>
+                    {children}
+                  </code>
+                );
+              }
+            },
+          }}
+        />
+        {/* {content.split("```").map((chunk, index) => {
           if (index % 2 === 0) {
             return (
               <Text key={index} className="message-text">
@@ -52,7 +88,7 @@ const ChatMessage: React.FC<{ message: Message }> = ({ message }) => {
               </div>
             );
           }
-        })}
+        })} */}
       </div>
     </div>
   );
