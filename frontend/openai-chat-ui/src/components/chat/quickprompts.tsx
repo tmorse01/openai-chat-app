@@ -29,7 +29,7 @@ const QuickPrompts = ({ sendMessage, setMessages }: QuickPromptsProps) => {
   ];
 
   return (
-    <Space size={"middle"} wrap>
+    <Space size={"middle"} wrap style={{ marginBottom: "16px" }}>
       {contextHolder}
       {promptButtons.map((prompt) => (
         <Button

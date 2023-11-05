@@ -20,6 +20,7 @@ const Chat: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const sendMessage = (message: Message) => {
+    // TODO figure out streaming response
     const updatedMessages = [...messages, message];
     setIsLoading(true);
     return fetch("http://localhost:8000/generate-text", {
