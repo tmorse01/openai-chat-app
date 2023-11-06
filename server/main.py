@@ -5,9 +5,10 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 import os
-import openai
+from openai import OpenAI
+
 import uvicorn
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = FastAPI()
 
@@ -32,7 +33,7 @@ async def generate_text(request_body: ChatCompletionRequest):
     try:
         start_time = time.time()
         # Generate a completion using OpenAI API
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=request_body.messages,
             temperature=1,
@@ -59,7 +60,7 @@ async def stream_chat_completion(request_body: StreamChatCompletionRequest):
 async def get_openai_generator(messages):
     try:
         # Generate a completion stream using OpenAI API
-        openai_stream = openai.ChatCompletion.create(
+        openai_stream = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
             stream=True
