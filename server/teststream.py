@@ -15,5 +15,6 @@ body = {
 
 with requests.post(url, stream=True, json=body) as r:
     for chunk in r.iter_content(None, decode_unicode=True):
+        print(chunk)
         if chunk:
             print(chunk, end='', flush=True)

@@ -79,9 +79,10 @@ async def get_openai_generator(messages):
             stream=True
         )
         for event in openai_stream:
-                if "content" in event["choices"][0].delta:
-                    current_response = event["choices"][0].delta.content
-                    yield "data: " + current_response + "\n\n"
+            print(event)
+            # if "content" in event["choices"][0].delta:
+            #     current_response = event["choices"][0].delta.content
+            #     yield "data: " + current_response + "\n\n"
     
     except Exception as e:
         print(e)
