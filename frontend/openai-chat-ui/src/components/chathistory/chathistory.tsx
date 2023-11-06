@@ -7,7 +7,7 @@ import "./chathistory.css";
 const { Title } = Typography;
 const { Sider } = Layout;
 const ChatHistory = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   return (
     <Sider width={256} collapsed={collapsed}>

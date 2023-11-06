@@ -20,41 +20,39 @@ const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([defaultSystemRole]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const sendMessage = async (message: Message) => {
+  const sendMessage = (message: Message) => {
+    console.log("message: ", message);
     const updatedMessages = [...messages, message];
-    console.log("exampleMessages: ", exampleMessages);
-    const body = JSON.stringify({ messages: exampleMessages });
-    console.log("body: ", body);
+    console.log(updatedMessages);
     setIsLoading(true);
-    await fetchEventSource(`http://localhost:8000/stream_chat_completion`, {
-      method: "POST",
-      headers: { Accept: "text/event-stream" },
-      body: body,
-      onopen(response) {
-        console.log("response", response);
-        if (response.ok && response.status === 200) {
-          console.log("Connection made ", response);
-        } else if (
-          response.status >= 400 &&
-          response.status < 500 &&
-          response.status !== 429
-        ) {
-          console.log("Client-side error ", response);
-        }
-      },
-      onmessage(event) {
-        console.log(event.data);
-        // setData((data) => [...data, parsedData]); // Important to set the data this way, otherwise old data may be overwritten if the stream is too fast
-      },
-      onclose() {
-        console.log("Connection closed by the server");
-        setIsLoading(false);
-      },
-      onerror(err) {
-        console.log("There was an error from server", err);
-        setIsLoading(false);
-      },
-    });
+    const fetchData = async () => {
+      await fetchEventSource("http://localhost:8000/stream", {
+        method: "POST",
+        headers: { Accept: "text/event-stream" },
+        body: JSON.stringify({ messages: updatedMessages }),
+        async onopen(res) {
+          if (res.ok && res.status === 200) {
+            console.log("Connection made ", res);
+          } else if (
+            res.status >= 400 &&
+            res.status < 500 &&
+            res.status !== 429
+          ) {
+            console.log("Client-side error ", res);
+          }
+        },
+        onmessage(event) {
+          console.log(event.data);
+        },
+        onclose() {
+          console.log("Connection closed by the server");
+        },
+        onerror(err) {
+          console.log("There was an error from server", err);
+        },
+      });
+    };
+    fetchData();
   };
 
   // const sendMessage = (message: Message) => {

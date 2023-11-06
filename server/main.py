@@ -6,27 +6,37 @@ from pydantic import BaseModel
 
 import os
 import openai
-import uvicorn
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Replace with your React app's URL
+    # Replace with your React app's URL
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
+
+class MessageItem(BaseModel):
+    role: str
+    content: str
+
+
 class ChatCompletionRequest(BaseModel):
-    messages: list[dict]
+    messages: list[MessageItem]
 
 # Define the endpoint for generating completions
+
+
 @app.post("/generate-text")
 async def generate_text(request_body: ChatCompletionRequest):
     try:
@@ -39,38 +49,37 @@ async def generate_text(request_body: ChatCompletionRequest):
 
         )
         response_time = time.time() - start_time
-        print(f"Full response received {response_time:.2f} seconds after request")
+        print(
+            f"Full response received {response_time:.2f} seconds after request")
         print(f"Full response received:\n{response}")
         # Return the response from OpenAI as JSON
         return response
-    
+
     except Exception as e:
         print(e)
         # Handle any errors and return an HTTP 500 error response
         raise HTTPException(status_code=500, detail=str(e))
-    
-class StreamChatCompletionRequest(BaseModel):
-    messages: list[dict]
 
-@app.post("/stream_chat_completion")
-async def stream_chat_completion(request_body: StreamChatCompletionRequest):
-    return StreamingResponse(get_openai_generator(request_body.messages), media_type='text/event-stream')
 
-async def get_openai_generator(messages):
-    try:
-        # Generate a completion stream using OpenAI API
-        openai_stream = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            stream=True
-        )
-        for event in openai_stream:
-                if "content" in event["choices"][0].delta:
-                    current_response = event["choices"][0].delta.content
-                    yield "data: " + current_response + "\n\n"
-    
-    except Exception as e:
-        print(e)
-        # Handle any errors and return an HTTP 500 error response
-        raise HTTPException(status_code=500, detail=str(e))
-    
+class StreamRequest(BaseModel):
+    messages: list
+
+
+@app.post('/stream')
+async def stream(req: StreamRequest):
+    return StreamingResponse(get_openai_generator(req.messages), media_type='text/event-stream')
+
+
+def get_openai_generator(messages: str):
+    openai_stream = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages,
+        temperature=0.0,
+        stream=True,
+    )
+
+    for event in openai_stream:
+        if "content" in event["choices"][0].delta:
+            current_response = event["choices"][0].delta.content
+            # important format
+            yield "data: " + current_response + "\n\n"
