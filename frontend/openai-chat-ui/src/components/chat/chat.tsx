@@ -13,7 +13,7 @@ const { Content, Footer } = Layout;
 
 const defaultSystemRole = {
   role: "system",
-  content: systemRoles[0].content,
+  content: systemRoles[0].content
 } as Message;
 
 const Chat: React.FC = () => {
@@ -49,7 +49,7 @@ const Chat: React.FC = () => {
         },
         onerror(err) {
           console.log("There was an error from server", err);
-        },
+        }
       });
     };
     fetchData();

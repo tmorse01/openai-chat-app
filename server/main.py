@@ -5,9 +5,10 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 import os
-import openai
+from openai import OpenAI
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+import uvicorn
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = FastAPI()
 
@@ -42,7 +43,7 @@ async def generate_text(request_body: ChatCompletionRequest):
     try:
         start_time = time.time()
         # Generate a completion using OpenAI API
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=request_body.messages,
             temperature=1,
@@ -69,17 +70,21 @@ class StreamRequest(BaseModel):
 async def stream(req: StreamRequest):
     return StreamingResponse(get_openai_generator(req.messages), media_type='text/event-stream')
 
-
-def get_openai_generator(messages: str):
-    openai_stream = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=messages,
-        temperature=0.0,
-        stream=True,
-    )
-
-    for event in openai_stream:
-        if "content" in event["choices"][0].delta:
-            current_response = event["choices"][0].delta.content
-            # important format
-            yield "data: " + current_response + "\n\n"
+async def get_openai_generator(messages):
+    try:
+        # Generate a completion stream using OpenAI API
+        openai_stream = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+            stream=True
+        )
+        for event in openai_stream:
+                if "content" in event["choices"][0].delta:
+                    current_response = event["choices"][0].delta.content
+                    yield "data: " + current_response + "\n\n"
+    
+    except Exception as e:
+        print(e)
+        # Handle any errors and return an HTTP 500 error response
+        raise HTTPException(status_code=500, detail=str(e))
+    
