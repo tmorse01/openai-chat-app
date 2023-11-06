@@ -12,7 +12,7 @@ const { Content, Footer } = Layout;
 
 const defaultSystemRole = {
   role: "system",
-  content: systemRoles[0].content,
+  content: systemRoles[0].content
 } as Message;
 
 const Chat: React.FC = () => {
@@ -26,16 +26,20 @@ const Chat: React.FC = () => {
     return fetch("http://localhost:8000/generate-text", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({ messages: updatedMessages }),
+      body: JSON.stringify({ messages: updatedMessages })
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
         // update messages with new response from server
         const assistantMessage = data.choices[0].message;
-        setMessages((prevState) => [...prevState, assistantMessage]);
+        const newMessage = {
+          role: assistantMessage.role,
+          content: assistantMessage.content
+        };
+        setMessages((prevState) => [...prevState, newMessage]);
         setIsLoading(false);
       })
       .catch((error) => {
